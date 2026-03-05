@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Biochemistry Department Portal</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background:#f1f5f9;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+width:380px;
+background:white;
+padding:30px;
+border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,0.15);
+}
+
+h2{
+text-align:center;
+color:#1e3a8a;
+}
+
+.tabs{
+display:flex;
+margin-bottom:20px;
+}
+
+.tabs button{
+flex:1;
+padding:10px;
+border:none;
+background:#e5e7eb;
+cursor:pointer;
+}
+
+.tabs button.active{
+background:#1e3a8a;
+color:white;
+}
+
+input{
+width:100%;
+padding:10px;
+margin-top:10px;
+border-radius:5px;
+border:1px solid #ccc;
+}
+
+.login{
+width:100%;
+margin-top:15px;
+padding:10px;
+background:#2563eb;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
+}
+
+.forgot{
+margin-top:10px;
+text-align:right;
+}
+
+.footer{
+text-align:center;
+font-size:12px;
+margin-top:15px;
+color:#555;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Biochemistry Portal</h2>
+
+<div class="tabs">
+<button class="active" onclick="setRole('admin',event)">Admin</button>
+<button onclick="setRole('faculty',event)">Faculty</button>
+<button onclick="setRole('student',event)">Student</button>
+</div>
+
+<input type="email" id="email" placeholder="Email">
+
+<input type="password" id="password" placeholder="Password">
+
+<button class="login" onclick="login()">Login</button>
+
+<div class="forgot">
+<a href="#" onclick="resetPassword()">Forgot Password?</a>
+</div>
+
+<div class="footer">
+Department of Biochemistry
+</div>
+
+</div>
+
+<script>
+
+// Replace with your Supabase credentials
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"
+const SUPABASE_KEY = "YOUR_PUBLIC_ANON_KEY"
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+let role = "admin"
+
+function setRole(r,e){
+
+role = r
+
+document.querySelectorAll(".tabs button").forEach(btn=>{
+btn.classList.remove("active")
+})
+
+e.target.classList.add("active")
+
+}
+
+async function login(){
+
+const email = document.getElementById("email").value
+const password = document.getElementById("password").value
+
+const {data,error} = await supabase.auth.signInWithPassword({
+
+email: email,
+password: password
+
+})
+
+if(error){
+
+alert(error.message)
+
+}else{
+
+alert(role + " login successful")
+
+if(role==="admin") window.location="admin.html"
+if(role==="faculty") window.location="faculty.html"
+if(role==="student") window.location="student.html"
+
+}
+
+}
+
+async function resetPassword(){
+
+const email = document.getElementById("email").value
+
+if(!email){
+
+alert("Enter email first")
+
+return
+
+}
+
+const {error} = await supabase.auth.resetPasswordForEmail(email)
+
+if(error){
+
+alert(error.message)
+
+}else{
+
+alert("Password reset link sent to email")
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
