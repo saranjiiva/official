@@ -218,6 +218,8 @@
     <h1>🔬 Metabolic Challenge — Host</h1>
     <div class="top-bar-right">
       <span class="online-badge" id="online-count">0 online</span>
+      <button class="btn btn-warn" onclick="resetScores()">Reset Scores</button>
+  <button class="btn btn-danger" onclick="fullReset()">Full Reset</button>
       <button class="btn btn-danger" onclick="endQuiz()">End Quiz</button>
     </div>
   </div>
@@ -898,6 +900,39 @@ function showToast(msg, type) {
   t.className = 'toast-host show ' + type;
   setTimeout(() => t.className = 'toast-host', 2500);
 }
+  window.fullReset = async function () {
+  const confirm1 = confirm("⚠️ This will DELETE all players, scores, and game data.\nProceed?");
+  if (!confirm1) return;
+
+  const confirm2 = confirm("This action CANNOT be undone.\nAre you absolutely sure?");
+  if (!confirm2) return;
+
+  try {
+    await remove(ref(db, 'players'));
+    await remove(ref(db, 'gameState'));
+
+    players = {};
+    currentQData = null;
+    qIndex = 0;
+
+    document.getElementById('group-grid').innerHTML = '';
+    document.getElementById('bar-chart').innerHTML = '';
+    document.getElementById('player-tbody').innerHTML = '';
+    document.getElementById('player-count').textContent = '0';
+    document.getElementById('online-count').textContent = '0 online';
+
+    document.getElementById('live-timer-card').style.display = 'none';
+    document.getElementById('answer-reveal-card').style.display = 'none';
+
+    updateStatusIndicator('lobby');
+
+    showToast("🔥 Full reset completed", "success");
+
+  } catch (err) {
+    console.error(err);
+    showToast("Reset failed", "error");
+  }
+};
 </script>
 </body>
 </html>
