@@ -753,7 +753,6 @@ window.previewQuestion = function() {
   currentQData = q;
   const prev = document.getElementById('q-preview');
   let html = `<strong>[${q.type.toUpperCase()}] ${q.text.substring(0,150)}${q.text.length>150?'...':''}</strong>`;
-  if (q.answer) html += `<br><br><span style="color:var(--success)">Answer: ${q.answer}</span>`;
   if (q.points) html += `<br><span style="color:var(--warn)">Points: ${q.points}</span>`;
   prev.innerHTML = html;
   document.getElementById('timer-range').value = q.timeLimit || 30;
