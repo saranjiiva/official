@@ -6,322 +6,127 @@
 <title>Metabolic Challenge Quiz</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
- 
   :root {
-    --bg: #0a0a0f;
-    --surface: #13131a;
-    --surface2: #1c1c28;
-    --border: #2a2a3d;
-    --accent: #7c6ff7;
-    --accent2: #4ecca3;
-    --warn: #f59e0b;
-    --danger: #ef4444;
-    --success: #22c55e;
-    --text: #e8e8f0;
-    --muted: #6b6b8a;
-    --font: 'Space Grotesk', sans-serif;
-    --mono: 'JetBrains Mono', monospace;
+    --bg:#0a0a0f;--surface:#13131a;--surface2:#1c1c28;--border:#2a2a3d;
+    --accent:#7c6ff7;--accent2:#4ecca3;--warn:#f59e0b;--danger:#ef4444;
+    --success:#22c55e;--text:#e8e8f0;--muted:#6b6b8a;
+    --font:'Space Grotesk',sans-serif;--mono:'JetBrains Mono',monospace;
   }
- 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
- 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font);
-    min-height: 100dvh;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-  }
- 
-  /* ── SCREENS ── */
-  .screen { display: none; flex-direction: column; min-height: 100dvh; padding: 24px 20px; animation: fadeUp .35s ease; }
-  .screen.active { display: flex; }
- 
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
- 
-  /* ── JOIN SCREEN ── */
-  .logo-mark {
-    width: 56px; height: 56px; border-radius: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    display: flex; align-items: center; justify-content: center;
-    font-size: 26px; margin: 0 auto 24px;
-  }
- 
-  h1 { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 6px; }
-  .subtitle { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 36px; }
- 
-  .field { margin-bottom: 16px; }
-  .field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
-  .field input, .field select {
-    width: 100%; padding: 14px 16px; border-radius: 12px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--font); font-size: 16px;
-    outline: none; transition: border-color .2s;
-    appearance: none;
-  }
-  .field input:focus, .field select:focus { border-color: var(--accent); }
-  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 40px; }
- 
-  .btn-primary {
-    width: 100%; padding: 16px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, var(--accent), #5b55d4);
-    color: #fff; font-family: var(--font); font-size: 16px; font-weight: 600;
-    cursor: pointer; transition: opacity .2s, transform .1s;
-    margin-top: 8px;
-  }
-  .btn-primary:active { transform: scale(0.98); opacity: .9; }
-  .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
- 
-  /* ── LOBBY SCREEN ── */
-  .lobby-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 20px;
-  }
-  .player-badge {
-    display: inline-block; background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 100px; padding: 6px 16px; font-size: 13px; font-weight: 600;
-    color: var(--accent2); margin-bottom: 16px;
-  }
-  .group-badge {
-    font-size: 36px; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text; margin-bottom: 8px;
-  }
-  .lobby-status { font-size: 14px; color: var(--muted); line-height: 1.6; }
- 
-  .pulse-ring {
-    width: 64px; height: 64px; border-radius: 50%;
-    border: 2px solid var(--accent); margin: 24px auto;
-    animation: pulse 2s infinite;
-  }
-  @keyframes pulse {
-    0%   { transform: scale(1); opacity: 1; }
-    50%  { transform: scale(1.15); opacity: .4; }
-    100% { transform: scale(1); opacity: 1; }
-  }
- 
-  /* ── QUESTION SCREEN ── */
-  .q-header {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 20px;
-  }
-  .round-pill {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 100px; padding: 6px 14px; font-size: 12px;
-    font-weight: 600; color: var(--accent);
-  }
-  .timer-display {
-    font-family: var(--mono); font-size: 20px; font-weight: 600;
-    color: var(--warn); min-width: 48px; text-align: right;
-  }
-  .timer-display.danger { color: var(--danger); animation: blink .6s infinite; }
-  @keyframes blink { 50% { opacity: .4; } }
- 
-  .q-type-badge {
-    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em;
-    color: var(--accent2); margin-bottom: 10px;
-  }
-  .q-text {
-    font-size: 17px; font-weight: 500; line-height: 1.55;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px; margin-bottom: 20px;
-    min-height: 90px;
-  }
- 
-  /* MCQ Options */
-  .options-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .option-btn {
-    width: 100%; padding: 14px 18px; border-radius: 12px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--font); font-size: 15px;
-    text-align: left; cursor: pointer; transition: all .15s;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .option-btn:active { transform: scale(0.98); }
-  .option-btn.selected { border-color: var(--accent); background: rgba(124,111,247,.15); }
-  .option-btn.correct  { border-color: var(--success); background: rgba(34,197,94,.15); color: var(--success); }
-  .option-btn.wrong    { border-color: var(--danger);  background: rgba(239,68,68,.12);  color: var(--danger); }
-  .option-key {
-    width: 28px; height: 28px; border-radius: 8px; background: var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; flex-shrink: 0;
-    font-family: var(--mono);
-  }
- 
-  /* True/False */
-  .tf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-  .tf-btn {
-    padding: 24px 12px; border-radius: 14px; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text); font-family: var(--font);
-    font-size: 18px; font-weight: 700; cursor: pointer; transition: all .15s; text-align: center;
-  }
-  .tf-btn.selected { border-color: var(--accent); background: rgba(124,111,247,.15); }
-  .tf-btn.correct  { border-color: var(--success); background: rgba(34,197,94,.15); color: var(--success); }
-  .tf-btn.wrong    { border-color: var(--danger);  background: rgba(239,68,68,.12);  color: var(--danger); }
- 
-  /* Fill in blank */
-  .fitb-input {
-    width: 100%; padding: 16px; border-radius: 12px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--font); font-size: 17px;
-    outline: none; transition: border-color .2s; margin-bottom: 16px;
-    text-transform: uppercase;
-  }
-  .fitb-input:focus { border-color: var(--accent); }
- 
-  /* Who Am I clues */
-  .clues-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
-  .clue-item {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5;
-    animation: fadeUp .3s ease;
-  }
-  .clue-num { font-size: 11px; font-weight: 700; color: var(--accent); margin-bottom: 4px; font-family: var(--mono); }
- 
-  /* Sequence arrange */
-  .seq-item {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 14px; font-size: 13px;
-    display: flex; align-items: center; gap: 10px; margin-bottom: 8px;
-    cursor: grab; user-select: none; transition: border-color .2s;
-  }
-  .seq-item.dragging { opacity: .5; border-color: var(--accent); }
-  .seq-letter {
-    font-family: var(--mono); font-weight: 700; font-size: 14px;
-    color: var(--accent); width: 20px; flex-shrink: 0;
-  }
- 
-  /* Match */
-  .match-container { margin-bottom: 20px; }
-  .match-col-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 8px; }
-  .match-pair-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-bottom: 8px; }
-  .match-item {
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 12px; font-size: 13px; cursor: pointer; transition: border-color .15s;
-  }
-  .match-item.selected { border-color: var(--accent); background: rgba(124,111,247,.12); }
-  .match-item.matched  { border-color: var(--success); background: rgba(34,197,94,.1); }
-  .match-arrow { color: var(--muted); font-size: 14px; text-align: center; }
-  .match-select {
-    width: 100%; padding: 10px; border-radius: 10px;
-    background: var(--surface2); border: 1px solid var(--border);
-    color: var(--text); font-family: var(--font); font-size: 13px; outline: none;
-  }
-  .match-select:focus { border-color: var(--accent); }
- 
-  /* Submit button */
-  .submit-btn {
-    width: 100%; padding: 16px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, var(--accent2), #1da878);
-    color: #fff; font-family: var(--font); font-size: 16px; font-weight: 700;
-    cursor: pointer; transition: opacity .2s, transform .1s;
-  }
-  .submit-btn:active { transform: scale(0.98); opacity: .9; }
-  .submit-btn:disabled { opacity: .35; cursor: not-allowed; }
- 
-  /* ── RESULT SCREEN ── */
-  .result-icon { font-size: 56px; text-align: center; margin: 24px 0 16px; }
-  .result-score {
-    font-size: 48px; font-weight: 700; text-align: center;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  .result-label { text-align: center; color: var(--muted); font-size: 14px; margin-bottom: 24px; }
-  .result-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 20px; margin-bottom: 12px;
-  }
-  .result-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .result-row:last-child { border-bottom: none; }
-  .result-row-label { color: var(--muted); }
-  .result-row-value { font-weight: 600; }
- 
-  /* ── WAITING ── */
-  .waiting-screen {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; text-align: center; padding: 40px 20px;
-  }
-  .waiting-dots { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
-  .waiting-dots span {
-    width: 10px; height: 10px; border-radius: 50%; background: var(--accent);
-    animation: dotBounce 1.2s infinite;
-  }
-  .waiting-dots span:nth-child(2) { animation-delay: .2s; }
-  .waiting-dots span:nth-child(3) { animation-delay: .4s; }
-  @keyframes dotBounce {
-    0%,80%,100% { transform: scale(.6); opacity: .4; }
-    40% { transform: scale(1); opacity: 1; }
-  }
- 
-  /* ── TOAST ── */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--surface2); border: 1px solid var(--border);
-    padding: 12px 20px; border-radius: 100px; font-size: 14px; font-weight: 500;
-    transition: transform .3s ease; z-index: 999; white-space: nowrap;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--success); color: var(--success); }
-  .toast.error   { border-color: var(--danger);  color: var(--danger); }
- 
-  .answered-badge {
-    background: rgba(34,197,94,.15); border: 1px solid var(--success);
-    border-radius: 100px; padding: 8px 20px; font-size: 14px; font-weight: 600;
-    color: var(--success); text-align: center; margin-bottom: 16px;
-  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden;}
+  .screen{display:none;flex-direction:column;min-height:100dvh;padding:24px 20px;animation:fadeUp .35s ease;}
+  .screen.active{display:flex;}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+  .logo-mark{width:56px;height:56px;border-radius:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 24px;}
+  h1{font-size:24px;font-weight:700;text-align:center;margin-bottom:6px;}
+  .subtitle{font-size:14px;color:var(--muted);text-align:center;margin-bottom:36px;}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;}
+  .field input,.field select{width:100%;padding:14px 16px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:16px;outline:none;transition:border-color .2s;appearance:none;}
+  .field input:focus,.field select:focus{border-color:var(--accent);}
+  .field select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px;}
+  .btn-primary{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent),#5b55d4);color:#fff;font-family:var(--font);font-size:16px;font-weight:600;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:8px;}
+  .btn-primary:active{transform:scale(0.98);opacity:.9;}
+  .btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+  .error-box{background:rgba(239,68,68,.1);border:1px solid var(--danger);border-radius:12px;padding:14px 16px;font-size:13px;color:var(--danger);margin-top:16px;line-height:1.5;display:none;}
+  .lobby-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:24px;text-align:center;margin-bottom:20px;}
+  .player-badge{display:inline-block;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:6px 16px;font-size:13px;font-weight:600;color:var(--accent2);margin-bottom:16px;}
+  .group-badge{font-size:36px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px;}
+  .lobby-status{font-size:14px;color:var(--muted);line-height:1.6;}
+  .pulse-ring{width:64px;height:64px;border-radius:50%;border:2px solid var(--accent);margin:24px auto;animation:pulse 2s infinite;}
+  @keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.15);opacity:.4}}
+  .q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+  .round-pill{background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--accent);}
+  .timer-display{font-family:var(--mono);font-size:20px;font-weight:600;color:var(--warn);min-width:48px;text-align:right;}
+  .timer-display.danger{color:var(--danger);animation:blink .6s infinite;}
+  @keyframes blink{50%{opacity:.4}}
+  .q-type-badge{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--accent2);margin-bottom:10px;}
+  .q-text{font-size:16px;font-weight:500;line-height:1.6;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px;white-space:pre-wrap;}
+  .options-grid{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+  .option-btn{width:100%;padding:14px 18px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:15px;text-align:left;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:12px;}
+  .option-btn:active{transform:scale(0.98);}
+  .option-btn.selected{border-color:var(--accent);background:rgba(124,111,247,.15);}
+  .option-key{width:28px;height:28px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;font-family:var(--mono);}
+  .tf-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+  .tf-btn{padding:28px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-family:var(--font);font-size:18px;font-weight:700;cursor:pointer;transition:all .15s;text-align:center;}
+  .tf-btn.selected{border-color:var(--accent);background:rgba(124,111,247,.15);}
+  .fitb-input{width:100%;padding:16px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:16px;outline:none;transition:border-color .2s;margin-bottom:16px;}
+  .fitb-input:focus{border-color:var(--accent);}
+  .clues-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px;}
+  .clue-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5;}
+  .clue-num{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;font-family:var(--mono);}
+  .seq-item{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13px;display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:grab;user-select:none;transition:border-color .2s;}
+  .seq-item.dragging{opacity:.5;border-color:var(--accent);}
+  .seq-letter{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--accent);width:20px;flex-shrink:0;}
+  .match-container{margin-bottom:16px;}
+  .match-pair-row{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:8px;}
+  .match-left{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;line-height:1.4;}
+  .match-arrow{color:var(--muted);font-size:14px;text-align:center;}
+  .match-select{width:100%;padding:10px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:12px;outline:none;appearance:none;}
+  .match-select:focus{border-color:var(--accent);}
+  .submit-btn{width:100%;padding:16px;border-radius:12px;border:none;background:linear-gradient(135deg,var(--accent2),#1da878);color:#fff;font-family:var(--font);font-size:16px;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:8px;}
+  .submit-btn:active{transform:scale(0.98);opacity:.9;}
+  .submit-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .answered-badge{background:rgba(34,197,94,.15);border:1px solid var(--success);border-radius:12px;padding:12px 20px;font-size:14px;font-weight:600;color:var(--success);text-align:center;margin-bottom:12px;display:none;line-height:1.5;}
+  .waiting-screen{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+  .waiting-dots{display:flex;gap:8px;justify-content:center;margin:20px 0;}
+  .waiting-dots span{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:dotBounce 1.2s infinite;}
+  .waiting-dots span:nth-child(2){animation-delay:.2s;}
+  .waiting-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes dotBounce{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+  .result-icon{font-size:56px;text-align:center;margin:24px 0 16px;}
+  .result-score{font-size:48px;font-weight:700;text-align:center;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  .result-label{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;}
+  .result-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:12px;}
+  .result-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .result-row:last-child{border-bottom:none;}
+  .result-row-label{color:var(--muted);}
+  .result-row-value{font-weight:600;}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface2);border:1px solid var(--border);padding:12px 20px;border-radius:100px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.success{border-color:var(--success);color:var(--success);}
+  .toast.error{border-color:var(--danger);color:var(--danger);}
 </style>
 </head>
 <body>
- 
-<!-- JOIN SCREEN -->
+
 <div id="screen-join" class="screen active">
-  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; max-width:400px; margin:0 auto; width:100%;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:400px;margin:0 auto;width:100%;">
     <div class="logo-mark">🧬</div>
     <h1>Metabolic Challenge</h1>
     <p class="subtitle">Phase 1 MBBS · Protein Metabolism</p>
- 
     <div class="field">
       <label>Your Full Name</label>
-      <input type="text" id="player-name" placeholder="e.g. Arun Kumar" autocomplete="off" autocorrect="off">
+      <input type="text" id="player-name" placeholder="e.g. Arun Kumar" autocomplete="off" autocorrect="off" autocapitalize="words">
     </div>
     <div class="field">
       <label>Your Group</label>
       <select id="player-group">
         <option value="">— Select group —</option>
-        <option value="1">Group 1</option>
-        <option value="2">Group 2</option>
-        <option value="3">Group 3</option>
-        <option value="4">Group 4</option>
-        <option value="5">Group 5</option>
-        <option value="6">Group 6</option>
+        <option value="1">Group 1</option><option value="2">Group 2</option>
+        <option value="3">Group 3</option><option value="4">Group 4</option>
+        <option value="5">Group 5</option><option value="6">Group 6</option>
       </select>
     </div>
     <button class="btn-primary" id="join-btn" onclick="joinQuiz()">Join Quiz →</button>
+    <div class="error-box" id="error-box"></div>
   </div>
 </div>
- 
-<!-- LOBBY SCREEN -->
+
 <div id="screen-lobby" class="screen">
-  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; max-width:400px; margin:0 auto; width:100%;">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;max-width:400px;margin:0 auto;width:100%;">
     <div class="lobby-card">
       <div class="player-badge" id="lobby-name">Student</div>
       <div class="group-badge" id="lobby-group">Group —</div>
-      <div class="lobby-status">You're in! Waiting for the host to start the quiz.</div>
+      <div class="lobby-status">You're in! Waiting for the host to start.</div>
       <div class="pulse-ring"></div>
       <div class="lobby-status" style="font-size:13px;">Keep this screen open on your phone.</div>
     </div>
   </div>
 </div>
- 
-<!-- QUESTION SCREEN -->
+
 <div id="screen-question" class="screen">
-  <div style="max-width:500px; margin:0 auto; width:100%; flex:1; display:flex; flex-direction:column;">
+  <div style="max-width:500px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column;">
     <div class="q-header">
       <div class="round-pill" id="q-round-label">Round 1</div>
       <div class="timer-display" id="timer">--</div>
@@ -329,406 +134,317 @@
     <div class="q-type-badge" id="q-type-label"></div>
     <div class="q-text" id="q-text"></div>
     <div id="q-answer-area" style="flex:1;"></div>
-    <div class="answered-badge" id="answered-badge" style="display:none;">✓ Answer submitted!</div>
+    <div class="answered-badge" id="answered-badge">✓ Answer submitted! Waiting for next question...</div>
     <button class="submit-btn" id="submit-btn" onclick="submitAnswer()" disabled>Submit Answer</button>
   </div>
 </div>
- 
-<!-- WAITING BETWEEN QUESTIONS -->
+
 <div id="screen-waiting" class="screen">
   <div class="waiting-screen">
     <div style="font-size:36px;">⏳</div>
-    <h2 style="margin:16px 0 8px; font-size:20px;">Answer recorded!</h2>
-    <p style="color:var(--muted); font-size:14px; margin-bottom:24px;">Waiting for the next question...</p>
+    <h2 style="margin:16px 0 8px;font-size:20px;">Answer recorded!</h2>
+    <p style="color:var(--muted);font-size:14px;margin-bottom:24px;">Waiting for the next question...</p>
     <div class="waiting-dots"><span></span><span></span><span></span></div>
-    <div id="waiting-score" style="margin-top:32px;">
-      <div style="font-size:13px; color:var(--muted); margin-bottom:4px;">Your score so far</div>
-      <div style="font-size:32px; font-weight:700; color:var(--accent);" id="current-score-display">0</div>
+    <div style="margin-top:32px;">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:4px;">Your score so far</div>
+      <div style="font-size:32px;font-weight:700;color:var(--accent);" id="current-score-display">0</div>
     </div>
   </div>
 </div>
- 
-<!-- RESULT SCREEN -->
+
 <div id="screen-result" class="screen">
-  <div style="max-width:400px; margin:0 auto; width:100%; flex:1; display:flex; flex-direction:column; justify-content:center;">
+  <div style="max-width:400px;margin:0 auto;width:100%;flex:1;display:flex;flex-direction:column;justify-content:center;">
     <div class="result-icon">🏆</div>
     <div class="result-score" id="final-score">0</div>
     <div class="result-label">points earned</div>
- 
     <div class="result-card">
-      <div class="result-row">
-        <span class="result-row-label">Your name</span>
-        <span class="result-row-value" id="res-name">—</span>
-      </div>
-      <div class="result-row">
-        <span class="result-row-label">Group</span>
-        <span class="result-row-value" id="res-group">—</span>
-      </div>
-      <div class="result-row">
-        <span class="result-row-label">Questions answered</span>
-        <span class="result-row-value" id="res-answered">—</span>
-      </div>
-      <div class="result-row">
-        <span class="result-row-label">Correct</span>
-        <span class="result-row-value" style="color:var(--success);" id="res-correct">—</span>
-      </div>
+      <div class="result-row"><span class="result-row-label">Your name</span><span class="result-row-value" id="res-name">—</span></div>
+      <div class="result-row"><span class="result-row-label">Group</span><span class="result-row-value" id="res-group">—</span></div>
+      <div class="result-row"><span class="result-row-label">Answered</span><span class="result-row-value" id="res-answered">—</span></div>
+      <div class="result-row"><span class="result-row-label">Correct</span><span class="result-row-value" style="color:var(--success);" id="res-correct">—</span></div>
     </div>
- 
-    <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:16px; text-align:center;">
-      <div style="font-size:12px; color:var(--muted); margin-bottom:4px; text-transform:uppercase; letter-spacing:.05em;">Group contribution</div>
-      <div style="font-size:22px; font-weight:700; color:var(--accent2);">Your points added to Group <span id="res-group-num">—</span></div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;text-align:center;">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.05em;">Group contribution</div>
+      <div style="font-size:20px;font-weight:700;color:var(--accent2);">Points added to Group <span id="res-group-num">—</span></div>
     </div>
   </div>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, set, get, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
- 
-// ── PASTE YOUR FIREBASE CONFIG HERE ──
+import { getDatabase, ref, set, onValue, push } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+// ════════════════════════════════════════════════════════
+// FIREBASE CONFIG
+// The databaseURL below is auto-generated from your projectId.
+// If it still fails, go to Firebase Console → Realtime Database
+// and copy the URL shown at the top (looks like the one below).
+// ════════════════════════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyAsI_htZo2YDnu7v27oGK05LbmlgnXAf1k",
   authDomain: "metabolic-quiz.firebaseapp.com",
+  databaseURL: "https://metabolic-quiz-default-rtdb.firebaseio.com",
   projectId: "metabolic-quiz",
   storageBucket: "metabolic-quiz.firebasestorage.app",
   messagingSenderId: "871560427437",
-  appId: "1:871560427437:web:c591a4ad1b18d771f89324",
-  measurementId: "G-CJG804BVQP"
+  appId: "1:871560427437:web:c591a4ad1b18d771f89324"
 };
- 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
- 
-// ── STATE ──
-let playerId = null;
-let playerName = '';
-let playerGroup = '';
-let currentScore = 0;
-let answersGiven = 0;
-let correctCount = 0;
-let currentQuestion = null;
-let answerSubmitted = false;
-let timerInterval = null;
- 
-// ── SCREENS ──
+
+let db;
+try {
+  const app = initializeApp(firebaseConfig);
+  db = getDatabase(app);
+} catch(e) {
+  showError("Firebase init failed: " + e.message + ". Check databaseURL.");
+}
+
+let playerId=null, playerName='', playerGroup='';
+let currentScore=0, answersGiven=0, correctCount=0;
+let currentQuestion=null, answerSubmitted=false, timerInterval=null, lastQIndex=-1;
+
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
+  document.getElementById('screen-'+id).classList.add('active');
 }
- 
+
 function showToast(msg, type='') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => t.className = 'toast', 2500);
+  t.textContent = msg; t.className = 'toast show '+type;
+  setTimeout(() => t.className = 'toast', 2800);
 }
- 
-// ── JOIN ──
-window.joinQuiz = async function() {
-  const name = document.getElementById('player-name').value.trim();
-  const group = document.getElementById('player-group').value;
-  if (!name) { showToast('Enter your name', 'error'); return; }
-  if (!group) { showToast('Select your group', 'error'); return; }
- 
+
+function showError(msg) {
+  const b = document.getElementById('error-box');
+  b.textContent = msg; b.style.display = 'block';
   const btn = document.getElementById('join-btn');
-  btn.disabled = true; btn.textContent = 'Joining...';
- 
+  btn.disabled = false; btn.textContent = 'Join Quiz →';
+}
+
+window.joinQuiz = async function() {
+  const name  = document.getElementById('player-name').value.trim();
+  const group = document.getElementById('player-group').value;
+  document.getElementById('error-box').style.display = 'none';
+  if (!name)  { showToast('Enter your name', 'error'); return; }
+  if (!group) { showToast('Select your group', 'error'); return; }
+  if (!db)    { showError('Database not connected. Check Firebase config.'); return; }
+
+  const btn = document.getElementById('join-btn');
+  btn.disabled = true; btn.textContent = 'Connecting...';
+
   playerName = name; playerGroup = group;
- 
-  const playerRef = push(ref(db, 'players'));
-  playerId = playerRef.key;
- 
-  await set(playerRef, {
-    name, group: parseInt(group), score: 0, answersGiven: 0, correct: 0,
-    joinedAt: Date.now(), online: true
-  });
- 
-  document.getElementById('lobby-name').textContent = name;
-  document.getElementById('lobby-group').textContent = 'Group ' + group;
-  showScreen('lobby');
- 
-  // Listen for game state
-  onValue(ref(db, 'gameState'), snap => {
-    const state = snap.val();
-    if (!state) return;
-    if (state.status === 'question') {
-      handleNewQuestion(state);
-    } else if (state.status === 'waiting') {
-      showScreen('waiting');
-      document.getElementById('current-score-display').textContent = currentScore;
-    } else if (state.status === 'ended') {
-      showFinalResult();
-    } else if (state.status === 'lobby') {
-      showScreen('lobby');
-    }
-  });
+
+  try {
+    const playerRef = push(ref(db, 'players'));
+    playerId = playerRef.key;
+    await set(playerRef, {
+      name, group: parseInt(group), score:0, answersGiven:0, correct:0,
+      joinedAt: Date.now(), online: true
+    });
+
+    document.getElementById('lobby-name').textContent = name;
+    document.getElementById('lobby-group').textContent = 'Group ' + group;
+    showScreen('lobby');
+    showToast('Joined successfully!', 'success');
+
+    onValue(ref(db, 'gameState'), snap => {
+      const state = snap.val();
+      if (!state) return;
+      if (state.status === 'question') {
+        const qi = state.qIndex || 0;
+        if (qi !== lastQIndex) { lastQIndex = qi; handleNewQuestion(state); }
+      } else if (state.status === 'waiting') {
+        showScreen('waiting');
+        document.getElementById('current-score-display').textContent = currentScore;
+      } else if (state.status === 'ended') {
+        clearInterval(timerInterval); showFinalResult();
+      } else if (state.status === 'lobby') {
+        showScreen('lobby');
+      }
+    });
+
+  } catch(e) {
+    showError(
+      'Could not connect. Most likely the databaseURL is wrong or Realtime Database is not enabled in your Firebase project.\n\n' +
+      'Steps to fix:\n1. Go to Firebase Console\n2. Click Build → Realtime Database\n3. Click "Create Database"\n4. Copy the URL and paste it as databaseURL in this file.\n\nError: ' + e.message
+    );
+  }
 };
- 
-// ── QUESTION HANDLING ──
+
 function handleNewQuestion(state) {
   currentQuestion = state.question;
   answerSubmitted = false;
   clearInterval(timerInterval);
-  showScreen('question');
- 
   const q = currentQuestion;
   document.getElementById('q-round-label').textContent = 'Round ' + state.round + ' · Q' + state.qIndex;
   document.getElementById('q-type-label').textContent = formatType(q.type);
   document.getElementById('q-text').textContent = q.text;
   document.getElementById('answered-badge').style.display = 'none';
-  document.getElementById('submit-btn').disabled = false;
+  document.getElementById('submit-btn').disabled = true;
   document.getElementById('submit-btn').style.display = 'block';
- 
+  showScreen('question');
   renderAnswerArea(q);
   startTimer(q.timeLimit || 30);
 }
- 
+
 function formatType(t) {
-  const map = {
-    mcq: '◆ Multiple Choice', tf: '◆ True / False',
-    fitb: '◆ Fill in the Blank', whoami: '◆ Who Am I?',
-    sequence: '◆ Sequence Arrange', match: '◆ Match the Following',
-    rapid: '◆ Rapid Fire', connection: '◆ Connection Round',
-    error: '◆ Error Spotting', assertion: '◆ Assertion–Reason'
-  };
-  return map[t] || '◆ Question';
+  return ({mcq:'◆ Multiple Choice',tf:'◆ True / False',fitb:'◆ Fill in the Blank',
+    whoami:'◆ Who Am I?',sequence:'◆ Sequence Arrange',match:'◆ Match the Following',
+    rapid:'◆ Rapid Fire',connection:'◆ Connection Round',
+    error:'◆ Error Spotting',assertion:'◆ Assertion–Reason'})[t]||'◆ Question';
 }
- 
+
 function renderAnswerArea(q) {
   const area = document.getElementById('q-answer-area');
-  area.innerHTML = '';
-  area.dataset.selected = '';
- 
-  if (q.type === 'mcq' || q.type === 'assertion') {
-    const grid = document.createElement('div');
-    grid.className = 'options-grid';
-    const keys = ['A','B','C','D'];
-    q.options.forEach((opt, i) => {
-      const btn = document.createElement('button');
-      btn.className = 'option-btn';
-      btn.innerHTML = `<span class="option-key">${keys[i]}</span>${opt}`;
-      btn.onclick = () => {
-        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        area.dataset.selected = keys[i];
-        document.getElementById('submit-btn').disabled = false;
-      };
+  area.innerHTML = ''; area.dataset.selected = '';
+  const setAns = v => { area.dataset.selected = v; document.getElementById('submit-btn').disabled = !v; };
+
+  if (q.type==='mcq'||q.type==='assertion') {
+    const grid = document.createElement('div'); grid.className='options-grid';
+    const keys=['A','B','C','D'];
+    (q.options||[]).forEach((opt,i)=>{
+      const btn=document.createElement('button'); btn.className='option-btn';
+      btn.innerHTML=`<span class="option-key">${keys[i]}</span>${opt}`;
+      btn.onclick=()=>{ document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); setAns(keys[i]); };
       grid.appendChild(btn);
     });
     area.appendChild(grid);
- 
-  } else if (q.type === 'tf') {
-    const grid = document.createElement('div');
-    grid.className = 'tf-grid';
-    ['True','False'].forEach(val => {
-      const btn = document.createElement('button');
-      btn.className = 'tf-btn';
-      btn.textContent = val;
-      btn.onclick = () => {
-        document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        area.dataset.selected = val;
-        document.getElementById('submit-btn').disabled = false;
-      };
+
+  } else if (q.type==='tf') {
+    const grid=document.createElement('div'); grid.className='tf-grid';
+    ['True','False'].forEach(val=>{
+      const btn=document.createElement('button'); btn.className='tf-btn'; btn.textContent=val;
+      btn.onclick=()=>{ document.querySelectorAll('.tf-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); setAns(val); };
       grid.appendChild(btn);
     });
     area.appendChild(grid);
- 
-  } else if (q.type === 'fitb' || q.type === 'rapid' || q.type === 'error') {
-    const inp = document.createElement('input');
-    inp.className = 'fitb-input';
-    inp.type = 'text';
-    inp.placeholder = 'Type your answer...';
-    inp.autocomplete = 'off';
-    inp.oninput = () => {
-      area.dataset.selected = inp.value.trim();
-      document.getElementById('submit-btn').disabled = inp.value.trim().length === 0;
-    };
-    area.appendChild(inp);
-    document.getElementById('submit-btn').disabled = true;
- 
-  } else if (q.type === 'whoami' || q.type === 'connection') {
-    const clueList = document.createElement('div');
-    clueList.className = 'clues-list';
-    q.clues.forEach((c, i) => {
-      const item = document.createElement('div');
-      item.className = 'clue-item';
-      item.innerHTML = `<div class="clue-num">CLUE ${i+1}</div>${c}`;
-      clueList.appendChild(item);
-    });
-    area.appendChild(clueList);
- 
-    const inp = document.createElement('input');
-    inp.className = 'fitb-input';
-    inp.type = 'text';
-    inp.placeholder = 'Who / What am I?';
-    inp.autocomplete = 'off';
-    inp.oninput = () => {
-      area.dataset.selected = inp.value.trim();
-      document.getElementById('submit-btn').disabled = inp.value.trim().length === 0;
-    };
-    area.appendChild(inp);
-    document.getElementById('submit-btn').disabled = true;
- 
-  } else if (q.type === 'sequence') {
-    let order = [...q.items];
-    const list = document.createElement('div');
-    list.id = 'seq-list';
-    const render = () => {
-      list.innerHTML = '';
-      order.forEach((item, i) => {
-        const el = document.createElement('div');
-        el.className = 'seq-item';
-        el.draggable = true;
-        el.dataset.idx = i;
-        el.innerHTML = `<span class="seq-letter">${item.key}</span><span>${item.text}</span><span style="margin-left:auto;color:var(--muted);font-size:18px;">⠿</span>`;
-        el.ondragstart = e => { e.dataTransfer.setData('text/plain', i); el.classList.add('dragging'); };
-        el.ondragend = () => el.classList.remove('dragging');
-        el.ondragover = e => e.preventDefault();
-        el.ondrop = e => {
-          e.preventDefault();
-          const from = parseInt(e.dataTransfer.getData('text/plain'));
-          const to = parseInt(el.dataset.idx);
-          const moved = order.splice(from, 1)[0];
-          order.splice(to, 0, moved);
-          area.dataset.selected = order.map(x => x.key).join('');
-          render();
-        };
+
+  } else if (['fitb','rapid','error'].includes(q.type)) {
+    const inp=document.createElement('input'); inp.className='fitb-input'; inp.type='text';
+    inp.placeholder='Type your answer here...'; inp.autocomplete='off';
+    inp.oninput=()=>setAns(inp.value.trim()||'');
+    area.appendChild(inp); setTimeout(()=>inp.focus(),150);
+
+  } else if (q.type==='whoami'||q.type==='connection') {
+    const cl=document.createElement('div'); cl.className='clues-list';
+    (q.clues||[]).forEach((c,i)=>{ const d=document.createElement('div'); d.className='clue-item'; d.innerHTML=`<div class="clue-num">CLUE ${i+1}</div>${c}`; cl.appendChild(d); });
+    area.appendChild(cl);
+    const inp=document.createElement('input'); inp.className='fitb-input'; inp.type='text';
+    inp.placeholder='Your answer...'; inp.autocomplete='off';
+    inp.oninput=()=>setAns(inp.value.trim()||'');
+    area.appendChild(inp); setTimeout(()=>inp.focus(),150);
+
+  } else if (q.type==='sequence') {
+    let order=[...(q.items||[])];
+    const list=document.createElement('div');
+    const renderSeq=()=>{
+      list.innerHTML='';
+      order.forEach((item,i)=>{
+        const el=document.createElement('div'); el.className='seq-item'; el.draggable=true; el.dataset.idx=i;
+        el.innerHTML=`<span class="seq-letter">${item.key}</span><span style="flex:1;font-size:13px;">${item.text}</span><span style="color:var(--muted);font-size:18px;flex-shrink:0;">⠿</span>`;
+        el.ondragstart=e=>{e.dataTransfer.setData('text/plain',i);el.classList.add('dragging');};
+        el.ondragend=()=>el.classList.remove('dragging');
+        el.ondragover=e=>e.preventDefault();
+        el.ondrop=e=>{e.preventDefault();const from=parseInt(e.dataTransfer.getData('text/plain'));const to=parseInt(el.dataset.idx);const moved=order.splice(from,1)[0];order.splice(to,0,moved);area.dataset.selected=order.map(x=>x.key).join('');renderSeq();};
         list.appendChild(el);
       });
     };
-    render();
-    area.appendChild(list);
-    area.dataset.selected = order.map(x => x.key).join('');
-    document.getElementById('submit-btn').disabled = false;
- 
-  } else if (q.type === 'match') {
-    const container = document.createElement('div');
-    container.className = 'match-container';
-    const answers = {};
-    q.pairs.forEach((pair, i) => {
-      const row = document.createElement('div');
-      row.className = 'match-pair-row';
- 
-      const left = document.createElement('div');
-      left.className = 'match-item';
-      left.textContent = pair.left;
- 
-      const arrow = document.createElement('div');
-      arrow.className = 'match-arrow';
-      arrow.textContent = '→';
- 
-      const sel = document.createElement('select');
-      sel.className = 'match-select';
-      sel.innerHTML = '<option value="">Pick...</option>' +
-        q.rightOptions.map(r => `<option value="${r}">${r}</option>`).join('');
-      sel.onchange = () => {
-        answers[i] = sel.value;
-        const ans = q.pairs.map((_, j) => answers[j] || '?').join('|');
-        area.dataset.selected = ans;
-        document.getElementById('submit-btn').disabled = Object.keys(answers).length < q.pairs.length || Object.values(answers).some(v => !v);
+    renderSeq(); area.appendChild(list);
+    area.dataset.selected=order.map(x=>x.key).join('');
+    document.getElementById('submit-btn').disabled=false;
+
+  } else if (q.type==='match') {
+    const container=document.createElement('div'); container.className='match-container';
+    const answers={};
+    (q.pairs||[]).forEach((pair,i)=>{
+      const row=document.createElement('div'); row.className='match-pair-row';
+      const left=document.createElement('div'); left.className='match-left'; left.textContent=pair.left;
+      const arrow=document.createElement('div'); arrow.className='match-arrow'; arrow.textContent='→';
+      const sel=document.createElement('select'); sel.className='match-select';
+      sel.innerHTML='<option value="">Pick...</option>'+(q.rightOptions||[]).map(r=>`<option value="${r}">${r}</option>`).join('');
+      sel.onchange=()=>{
+        answers[i]=sel.value;
+        area.dataset.selected=(q.pairs||[]).map((_,j)=>answers[j]||'?').join('|');
+        document.getElementById('submit-btn').disabled=!(q.pairs||[]).every((_,j)=>answers[j]);
       };
- 
-      row.appendChild(left); row.appendChild(arrow); row.appendChild(sel);
-      container.appendChild(row);
+      row.appendChild(left); row.appendChild(arrow); row.appendChild(sel); container.appendChild(row);
     });
     area.appendChild(container);
-    document.getElementById('submit-btn').disabled = true;
   }
 }
- 
-// ── TIMER ──
+
 function startTimer(seconds) {
-  let remaining = seconds;
-  const el = document.getElementById('timer');
-  el.textContent = remaining;
-  el.className = 'timer-display';
   clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
+  let remaining=seconds;
+  const el=document.getElementById('timer');
+  el.textContent=remaining; el.className='timer-display';
+  timerInterval=setInterval(()=>{
     remaining--;
-    el.textContent = remaining;
-    if (remaining <= 10) el.className = 'timer-display danger';
-    if (remaining <= 0) {
-      clearInterval(timerInterval);
-      if (!answerSubmitted) autoSubmit();
-    }
-  }, 1000);
+    el.textContent=remaining;
+    if(remaining<=10) el.className='timer-display danger';
+    if(remaining<=0){clearInterval(timerInterval);if(!answerSubmitted)autoSubmit();}
+  },1000);
 }
- 
+
 function autoSubmit() {
-  const area = document.getElementById('q-answer-area');
-  const ans = area.dataset.selected || '__timeout__';
-  recordAnswer(ans, false, false);
-  answerSubmitted = true;
-  document.getElementById('submit-btn').disabled = true;
-  document.getElementById('answered-badge').style.display = 'block';
-  showToast("Time's up!", 'error');
+  answerSubmitted=true; answersGiven++;
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('answered-badge').style.display='block';
+  showToast("Time's up!",'error');
+  recordAnswer('__timeout__',false,0);
 }
- 
-// ── SUBMIT ──
+
 window.submitAnswer = function() {
-  if (answerSubmitted) return;
-  const area = document.getElementById('q-answer-area');
-  const ans = area.dataset.selected;
-  if (!ans) { showToast('Please select an answer', 'error'); return; }
- 
-  const correct = checkAnswer(ans, currentQuestion);
-  const points = correct ? (currentQuestion.points || 10) : 0;
-  currentScore += points;
-  if (correct) correctCount++;
-  answersGiven++;
- 
-  if (correct) showToast('Correct! +' + points + ' pts', 'success');
-  else showToast('Incorrect', 'error');
- 
-  recordAnswer(ans, correct, points);
-  answerSubmitted = true;
- 
-  document.getElementById('submit-btn').disabled = true;
-  document.getElementById('answered-badge').style.display = 'block';
+  if(answerSubmitted) return;
+  const area=document.getElementById('q-answer-area');
+  const ans=area.dataset.selected;
+  if(!ans){showToast('Please select an answer first','error');return;}
   clearInterval(timerInterval);
+  const correct=checkAnswer(ans,currentQuestion);
+  const points=correct?(currentQuestion.points||10):0;
+  currentScore+=points; answersGiven++; if(correct) correctCount++;
+  answerSubmitted=true;
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('answered-badge').style.display='block';
+  if(correct) showToast('Correct! +'+points+' pts','success');
+  else showToast('Incorrect','error');
+  recordAnswer(ans,correct,points);
 };
- 
-function checkAnswer(given, q) {
-  const g = given.trim().toLowerCase();
-  const a = (q.answer || '').trim().toLowerCase();
-  if (q.type === 'mcq' || q.type === 'assertion' || q.type === 'tf') {
-    return g === a;
-  }
-  if (q.type === 'fitb' || q.type === 'rapid' || q.type === 'error' || q.type === 'whoami' || q.type === 'connection') {
-    return q.acceptedAnswers ? q.acceptedAnswers.some(acc => g.includes(acc.toLowerCase())) : g.includes(a);
-  }
-  if (q.type === 'sequence') return g === a;
-  if (q.type === 'match') {
-    const correct = q.answer.split('|');
-    return g.split('|').every((v,i) => v.trim().toLowerCase() === correct[i].trim().toLowerCase());
+
+function checkAnswer(given,q) {
+  const g=given.trim().toLowerCase();
+  const a=(q.answer||'').trim().toLowerCase();
+  if(['mcq','assertion','tf'].includes(q.type)) return g===a;
+  if(['fitb','rapid','error','whoami','connection'].includes(q.type))
+    return q.acceptedAnswers?.length ? q.acceptedAnswers.some(acc=>g.includes(acc.toLowerCase())) : g.includes(a);
+  if(q.type==='sequence') return g===a;
+  if(q.type==='match'){
+    const cp=a.split('|'); const gp=g.split('|');
+    return cp.every((c,i)=>(gp[i]||'').trim().toLowerCase()===c.trim().toLowerCase());
   }
   return false;
 }
- 
-async function recordAnswer(ans, correct, points) {
-  await set(ref(db, `players/${playerId}`), {
-    name: playerName,
-    group: parseInt(playerGroup),
-    score: currentScore,
-    answersGiven,
-    correct: correctCount,
-    online: true,
-    lastAnswer: { answer: ans, correct, points, qIndex: currentQuestion.index }
-  });
+
+async function recordAnswer(ans,correct,points) {
+  if(!playerId||!db) return;
+  try {
+    await set(ref(db,'players/'+playerId),{
+      name:playerName, group:parseInt(playerGroup), score:currentScore,
+      answersGiven, correct:correctCount, online:true,
+      lastAnswer:{answer:ans,correct,points,qIndex:currentQuestion?.index||0}
+    });
+  } catch(e){ showToast('Sync error — check connection','error'); }
 }
- 
-// ── FINAL ──
+
 function showFinalResult() {
   showScreen('result');
-  document.getElementById('final-score').textContent = currentScore;
-  document.getElementById('res-name').textContent = playerName;
-  document.getElementById('res-group').textContent = 'Group ' + playerGroup;
-  document.getElementById('res-answered').textContent = answersGiven;
-  document.getElementById('res-correct').textContent = correctCount;
-  document.getElementById('res-group-num').textContent = playerGroup;
+  document.getElementById('final-score').textContent=currentScore;
+  document.getElementById('res-name').textContent=playerName;
+  document.getElementById('res-group').textContent='Group '+playerGroup;
+  document.getElementById('res-answered').textContent=answersGiven;
+  document.getElementById('res-correct').textContent=correctCount;
+  document.getElementById('res-group-num').textContent=playerGroup;
 }
 </script>
 </body>
